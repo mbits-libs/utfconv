@@ -1,0 +1,8 @@
+[requires]
+gtest/1.10.0
+
+[options]
+gtest:build_gmock=False
+
+[generators]
+cmake

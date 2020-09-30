@@ -1,0 +1,9 @@
+[submodule "external/semver"]
+	path = external/semver
+	url = https://github.com/mbits-libs/semver.git
+[submodule "tools/coveralls"]
+	path = tools/coveralls
+	url = https://github.com/mbits-libs/coveralls.git
+[submodule "tools/testing"]
+	path = tools/testing
+	url = https://github.com/mbits-libs/testing.git
