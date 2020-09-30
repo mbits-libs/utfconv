@@ -21,6 +21,10 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CMAKE_CXX_STANDARD_REQUIRED OFF)
   set(CMAKE_CXX_EXTENSIONS OFF)
 
+  find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(TARGETS)
 else()
   message(STATUS "utfconv: Subdir")
   set(UTFCONV_STANDALONE OFF)
@@ -29,19 +33,15 @@ endif()
 set(UTFCONV_TESTING ${UTFCONV_STANDALONE} CACHE BOOL "Compile and/or run self-tests")
 set(UTFCONV_INSTALL ${UTFCONV_STANDALONE} CACHE BOOL "Install the library")
 
-find_package(Python3 COMPONENTS Interpreter REQUIRED)
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
-
-list(APPEND COVERALLS_DIRS
+set(COVERALLS_PREFIX UTFCONV_)
+list(APPEND UTFCONV_COVERALLS_DIRS
   include/utf
   src
 )
 
 include(tools/coveralls/Coveralls.cmake)
 
-if (COVERALLS AND NOT UTFCONV_TESTING)
+if (UTFCONV_COVERALLS AND NOT UTFCONV_TESTING)
   message(FATAL_ERROR "Coveralls are useless without -DUTFCONV_TESTING=ON")
 endif()
 

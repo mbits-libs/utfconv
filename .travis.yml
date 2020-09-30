@@ -44,6 +44,6 @@ script:
   - mkdir build
   - cd build
   - conan install .. --build missing -s build_type=Debug
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON -DCOVERALLS_UPLOAD=ON ..
+  - cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DUTFCONV_COVERALLS:BOOL=ON -DUTFCONV_COVERALLS_UPLOAD:BOOL=ON ..
   - make -j`nproc`
   - make coveralls
