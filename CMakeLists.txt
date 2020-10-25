@@ -24,7 +24,8 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS)
+  conan_basic_setup()
+  find_package(GTest REQUIRED CONFIG HINTS ${PROJECT_BINARY_DIR})
 else()
   message(STATUS "utfconv: Subdir")
   set(UTFCONV_STANDALONE OFF)
@@ -124,7 +125,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}/src
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC CONAN_PKG::gtest semver)
+target_link_libraries(${PROJECT_NAME} PUBLIC semver)
 set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
@@ -148,7 +149,7 @@ if (UTFCONV_TESTING)
 set(EXTERNAL_GTEST ON)
 include( ${CMAKE_CURRENT_SOURCE_DIR}/tools/testing/googletest.cmake )
 
-add_test_executable(${PROJECT_NAME}-test CONAN_PKG DATA_PATH data LIBRARIES ${PROJECT_NAME})
+add_test_executable(${PROJECT_NAME}-test DATA_PATH data LIBRARIES ${PROJECT_NAME})
 target_compile_options(${PROJECT_NAME}-test PRIVATE ${UTFCONV_ADDITIONAL_WALL_FLAGS})
 target_compile_features(${PROJECT_NAME}-test PRIVATE cxx_std_17)
 
