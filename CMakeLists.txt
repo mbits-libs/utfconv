@@ -34,16 +34,14 @@ endif()
 set(UTFCONV_TESTING ${UTFCONV_STANDALONE} CACHE BOOL "Compile and/or run self-tests")
 set(UTFCONV_INSTALL ${UTFCONV_STANDALONE} CACHE BOOL "Install the library")
 
-set(COVERALLS_PREFIX UTFCONV_)
-list(APPEND UTFCONV_COVERALLS_DIRS
-  include/utf
-  src
-)
+if (UTFCONV_TESTING)
+  set(COVERALLS_PREFIX UTFCONV_)
+  list(APPEND UTFCONV_COVERALLS_DIRS
+    include/utf
+    src
+  )
 
-include(tools/coveralls/Coveralls.cmake)
-
-if (UTFCONV_COVERALLS AND NOT UTFCONV_TESTING)
-  message(FATAL_ERROR "Coveralls are useless without -DUTFCONV_TESTING=ON")
+  include(tools/coveralls/Coveralls.cmake)
 endif()
 
 add_subdirectory(external)
