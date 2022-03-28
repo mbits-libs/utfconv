@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.12)
 project (utfconv
-  VERSION 1.0.0
+  VERSION 1.0.1
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 
@@ -30,6 +30,7 @@ if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURC
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup()
   find_package(GTest REQUIRED CONFIG)
+  find_package(mbits-semver REQUIRED CONFIG)
 else()
   message(STATUS "utfconv: Subdir")
   set(UTFCONV_STANDALONE OFF)
@@ -47,8 +48,6 @@ if (UTFCONV_TESTING)
 
   include(tools/coveralls/Coveralls.cmake)
 endif()
-
-add_subdirectory(external)
 
 # See <https://github.com/lefticus/cppbestpractices/blob/v1.0.0/02-Use_the_Tools_Available.md#compilers>
 if (MSVC)
@@ -127,7 +126,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}/src
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC semver)
+target_link_libraries(${PROJECT_NAME} PUBLIC mbits-semver::semver)
 set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
