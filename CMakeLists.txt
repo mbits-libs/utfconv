@@ -54,6 +54,7 @@ if (MSVC)
   set(UTFCONV_ADDITIONAL_WALL_FLAGS
       /permissive-
       /Zc:__cplusplus
+      /utf-8
       /W4
       /w14242
       /w14254

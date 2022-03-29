@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
 #include <utf/utf.hpp>
 #include <utf/version.hpp>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#endif
 
 namespace utf::testing {
 	using namespace ::std::literals;
@@ -83,6 +88,7 @@ namespace utf::testing {
 #endif
 
 	void print(std::ostream& out, std::u16string const& s) {
+#if 0
 		for (auto c : s) {
 			if (c < 127) {
 				out << static_cast<char>(c);
@@ -93,9 +99,13 @@ namespace utf::testing {
 			         static_cast<unsigned>(c));
 			out << buffer;
 		}
+#else
+		print(out, as_str8(s));
+#endif
 	}
 
 	void print(std::ostream& out, std::u32string const& s) {
+#if 0
 		for (auto c : s) {
 			if (c < 127) {
 				out << static_cast<char>(c);
@@ -106,11 +116,15 @@ namespace utf::testing {
 			         static_cast<unsigned>(c));
 			out << buffer;
 		}
+#else
+		print(out, as_str8(s));
+#endif
 	}
 
 	template <typename String>
 	struct printable {
 		String val;
+		std::string_view tag{};
 		bool operator==(printable const& right) const noexcept {
 			return val == right.val;
 		}
@@ -118,6 +132,7 @@ namespace utf::testing {
 		friend std::ostream& operator<<(std::ostream& out,
 		                                printable const& print) {
 			utf::testing::print(out, print.val);
+			if (!print.tag.empty()) out << " [" << print.tag << ']';
 			return out;
 		}
 	};
@@ -127,14 +142,37 @@ namespace utf::testing {
 		return {str};
 	}
 
+	template <typename Char>
+	std::string_view tag_v;
+
+	template <>
+	std::string_view tag_v<char> = "char"sv;
+
+	template <>
+	std::string_view tag_v<char16_t> = "u16"sv;
+
+	template <>
+	std::string_view tag_v<char32_t> = "u32"sv;
+
+#ifdef __cpp_char8_t
+	template <>
+	std::string_view tag_v<char8_t> = "u8"sv;
+#endif
+
 	struct utf_conv : TestWithParam<string_convert> {
 		template <typename Out, typename In>
 		void ExpectUtfEq(const std::basic_string<Out>& expected_str,
 		                 const std::basic_string<In>& tested) {
 			using printable_t = printable<std::basic_string<Out>>;
-			auto expected = printable_t{expected_str};
-			auto actual = printable_t{utf_as<Out, In>(tested)};
+			auto expected = printable_t{expected_str, tag_v<Out>};
+			auto actual = printable_t{utf_as<Out, In>(tested), tag_v<In>};
 			EXPECT_EQ(expected, actual);
+		}
+
+		static void SetUpTestSuite() {
+#ifdef _WIN32
+			SetConsoleOutputCP(CP_UTF8);
+#endif
 		}
 	};
 
@@ -300,9 +338,10 @@ namespace utf::testing {
 	    {},
 	    {U8STR("ascii"), u"ascii", U"ascii"},
 	    {U8STR("\x24"), utf16(0x24), utf32(0x24)},
-	    {U8STR("\xc2\xa2"), utf16(0xa2), utf32(0xa2)},
-	    {U8STR("\xe2\x82\xac"), utf16(0x20ac), utf32(0x20ac)},
-	    {U8STR("\xf0\x90\x8d\x88"), utf16(0xd800, 0xdf48), utf32(0x10348u)},
+	    {"\xc2\xa2" S8(u8"\u00a2"), utf16(0xa2), utf32(0xa2)},
+	    {"\xe2\x82\xac" S8(u8"\u20ac"), utf16(0x20ac), utf32(0x20ac)},
+	    {"\xf0\x90\x8d\x88" S8(u8"\U00010348"), utf16(0xd800, 0xdf48),
+	     utf32(0x10348u)},
 	    {U8STR("vȧĺũê\0vȧĺũêş"s), u"vȧĺũê\0vȧĺũêş"s, U"vȧĺũê\0vȧĺũêş"s},
 	    {U8STR("ŧĥê qũïçķ Ƌȓôŵñ ƒôx ĵũmpş ôvêȓ ȧ ĺȧȥÿ đôğ"),
 	     u"ŧĥê qũïçķ Ƌȓôŵñ ƒôx ĵũmpş ôvêȓ ȧ ĺȧȥÿ đôğ",
