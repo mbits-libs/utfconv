@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.12)
 project (utfconv
-  VERSION 1.0.1
+  VERSION 1.0.2
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 
@@ -27,6 +27,7 @@ if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURC
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_BINARY_DIR}")
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_BINARY_DIR}")
 
+  set(CONAN_CMAKE_SILENT_OUTPUT ON)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup()
   find_package(GTest REQUIRED CONFIG)

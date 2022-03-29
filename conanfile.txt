@@ -1,5 +1,5 @@
 [requires]
-gtest/1.10.0
+gtest/cci.20210126
 mbits-semver/0.1.0
 
 [options]
