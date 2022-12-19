@@ -3,12 +3,14 @@
 
 cmake_minimum_required (VERSION 3.12)
 project (utfconv
-  VERSION 1.0.2
+  VERSION 1.0.3
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 
 set(PROJECT_VERSION_STABILITY "")
 set(UTFCONV_BUILD_AS_STANDALONE OFF CACHE BOOL "Force build as if standalone")
+
+set(CONAN_CMAKE_SILENT_OUTPUT ON)
 
 if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(STATUS "utfconv: Standalone")
@@ -24,13 +26,9 @@ if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURC
 
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_BINARY_DIR}")
-  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_BINARY_DIR}")
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_BINARY_DIR}/conan")
+  set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_BINARY_DIR}/conan")
 
-  set(CONAN_CMAKE_SILENT_OUTPUT ON)
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup()
-  find_package(GTest REQUIRED CONFIG)
   find_package(mbits-semver REQUIRED CONFIG)
 else()
   message(STATUS "utfconv: Subdir")
@@ -39,6 +37,11 @@ endif()
 
 set(UTFCONV_TESTING ${UTFCONV_STANDALONE} CACHE BOOL "Compile and/or run self-tests")
 set(UTFCONV_INSTALL ${UTFCONV_STANDALONE} CACHE BOOL "Install the library")
+
+if(UTFCONV_TESTING)
+  set(CONAN_CMAKE_SILENT_OUTPUT ON)
+  find_package(GTest REQUIRED CONFIG)
+endif()
 
 if (UTFCONV_TESTING)
   set(COVERALLS_PREFIX UTFCONV_)
@@ -122,13 +125,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE ${UTFCONV_ADDITIONAL_WALL_FLAGS})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_include_directories(${PROJECT_NAME}
   PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_BINARY_DIR}/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}/src
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC mbits-semver::semver)
+target_link_libraries(${PROJECT_NAME} PUBLIC mbits::semver)
 set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
@@ -138,7 +142,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 ##################################################################
 
 if (UTFCONV_INSTALL)
-  install(TARGETS ${PROJECT_NAME})
+  install(TARGETS ${PROJECT_NAME} EXPORT mbits)
+  install(EXPORT mbits NAMESPACE "mbits::" DESTINATION lib/cmake)
   install(DIRECTORY include/utf DESTINATION include)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/utf/version.hpp" DESTINATION include/utf)
 endif()
