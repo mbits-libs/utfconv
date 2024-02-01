@@ -71,7 +71,7 @@ Converts other UTF strings to `std::string` encoded as UTF-8. If compiled as
 C++20, the behavior is that of `utf::as_u8`, except for the type of the
 character used.
 
-### utf::as_str8
+### utf::as_u16
 
 ```cpp
 std::u16string utf::as_u16(std::u8string_view src); // C++20
