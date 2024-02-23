@@ -43,6 +43,7 @@
 ------------------------------------------------------------------------ */
 
 #include <iterator>
+#include <cstdint>
 #include <utf/utf.hpp>
 
 namespace utf {
