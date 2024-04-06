@@ -1,9 +1,9 @@
-# Copyright (c) 2020 midnightBITS
+# Copyright (c) 2020-2024 midnightBITS
 # This file is licensed under MIT license (see LICENSE for details)
 
 cmake_minimum_required (VERSION 3.12)
 project (utfconv
-  VERSION 1.0.3
+  VERSION 1.0.4
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 

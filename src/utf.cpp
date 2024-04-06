@@ -42,10 +42,12 @@
 
 ------------------------------------------------------------------------ */
 
+#include <cstdint>
 #include <iterator>
 #include <utf/utf.hpp>
 
 namespace utf {
+	using std::uint8_t;
 	/*
 	 * Index into the table below with the first byte of a UTF-8 sequence to
 	 * get the number of trailing bytes that are supposed to follow it.

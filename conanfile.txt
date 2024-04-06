@@ -1,10 +1,11 @@
 [requires]
-gtest/cci.20210126
+gtest/1.14.0
 mbits-semver/0.1.1
 
 [options]
 gtest:build_gmock=False
 
 [generators]
-cmake
-cmake_find_package_multi
+CMakeDeps
+CMakeToolchain
+VirtualRunEnv
