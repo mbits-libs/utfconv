@@ -16,12 +16,14 @@
 #define UTFCONV_VERSION_STABILITY "@PROJECT_VERSION_STABILITY@"
 
 #ifndef RC_INVOKED
+#ifndef UTF_NO_VERSION
 #include <semver/semver.hh>
 
 namespace utf {
 	inline constexpr semver::project_version version{"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@@PROJECT_VERSION_STABILITY@"};
 	semver::project_version get_version() noexcept;
 }  // namespace utf
+#endif // UTF_NO_VERSION
 #endif  // RC_INVOKED
 
 // clang-format on

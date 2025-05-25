@@ -176,10 +176,12 @@ namespace utf::testing {
 		}
 	};
 
+#ifndef UTF_NO_VERSION
 	TEST(utf, version) {
 		EXPECT_EQ(version, get_version());
 		EXPECT_TRUE(version.compatible_with(get_version()));
 	}
+#endif
 
 	struct utf_errors : utf_conv {};
 

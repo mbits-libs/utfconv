@@ -132,7 +132,13 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}/src
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC mbits::semver)
+
+if (TARGET mbits::semver)
+  target_link_libraries(${PROJECT_NAME} PUBLIC mbits::semver)
+else()
+  target_compile_options(${PROJECT_NAME} PUBLIC -DUTF_NO_VERSION)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
