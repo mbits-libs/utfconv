@@ -1,16 +1,19 @@
 # Copyright (c) 2020-2024 midnightBITS
 # This file is licensed under MIT license (see LICENSE for details)
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 4.0)
 project (utfconv
   VERSION 1.0.4
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set (CMAKE_VERBOSE_MAKEFILE ON)
+
+option(BUILD_TESTS "Build test programs" OFF)
+
 set(PROJECT_VERSION_STABILITY "")
 set(UTFCONV_BUILD_AS_STANDALONE OFF CACHE BOOL "Force build as if standalone")
-
-set(CONAN_CMAKE_SILENT_OUTPUT ON)
 
 if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(STATUS "utfconv: Standalone")
@@ -24,23 +27,21 @@ if (UTFCONV_BUILD_AS_STANDALONE OR CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURC
   set(CMAKE_CXX_STANDARD_REQUIRED OFF)
   set(CMAKE_CXX_EXTENSIONS OFF)
 
-  find_package(Python3 COMPONENTS Interpreter REQUIRED)
-
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_BINARY_DIR}/conan")
   set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_BINARY_DIR}/conan")
 
-  find_package(mbits-semver REQUIRED CONFIG)
+  find_package(mbits-semver CONFIG)
 else()
   message(STATUS "utfconv: Subdir")
   set(UTFCONV_STANDALONE OFF)
 endif()
-
-set(UTFCONV_TESTING ${UTFCONV_STANDALONE} CACHE BOOL "Compile and/or run self-tests")
+if(BUILD_TESTS)
+    set(UTFCONV_TESTING ${UTFCONV_STANDALONE} CACHE BOOL "Compile and/or run self-tests")
+endif()
 set(UTFCONV_INSTALL ${UTFCONV_STANDALONE} CACHE BOOL "Install the library")
 
 if(UTFCONV_TESTING)
-  set(CONAN_CMAKE_SILENT_OUTPUT ON)
-  find_package(GTest REQUIRED CONFIG)
+    find_package(GTest REQUIRED CONFIG)
 endif()
 
 if (UTFCONV_TESTING)
@@ -158,14 +159,15 @@ endif()
 ##  TESTING
 ##################################################################
 
+
 if (UTFCONV_TESTING)
 
-set(EXTERNAL_GTEST ON)
-include( ${CMAKE_CURRENT_SOURCE_DIR}/tools/testing/googletest.cmake )
+    set(EXTERNAL_GTEST ON)
+    include( ${CMAKE_CURRENT_SOURCE_DIR}/tools/testing/googletest.cmake )
 
-add_test_executable(${PROJECT_NAME}-test DATA_PATH data LIBRARIES ${PROJECT_NAME})
-target_compile_options(${PROJECT_NAME}-test PRIVATE ${UTFCONV_ADDITIONAL_WALL_FLAGS})
-target_compile_features(${PROJECT_NAME}-test PRIVATE cxx_std_17)
+    add_test_executable(${PROJECT_NAME}-test DATA_PATH data LIBRARIES ${PROJECT_NAME})
+    target_compile_options(${PROJECT_NAME}-test PRIVATE ${UTFCONV_ADDITIONAL_WALL_FLAGS})
+    target_compile_features(${PROJECT_NAME}-test PRIVATE cxx_std_17)
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME}-test)
+    add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME}-test)
 endif()
