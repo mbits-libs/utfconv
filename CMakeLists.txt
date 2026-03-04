@@ -3,7 +3,7 @@
 
 cmake_minimum_required (VERSION 3.12)
 project (utfconv
-  VERSION 1.0.4
+  VERSION 1.0.5
   DESCRIPTION "Conversion library between string, u16string, u32string and u8string"
   LANGUAGES CXX)
 
