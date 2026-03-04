@@ -3,7 +3,7 @@ gtest/1.14.0
 mbits-semver/0.1.1
 
 [options]
-gtest:build_gmock=False
+gtest/*:build_gmock=False
 
 [generators]
 CMakeDeps
